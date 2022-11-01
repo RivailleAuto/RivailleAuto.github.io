@@ -1,0 +1,143 @@
+#include<iostream>
+
+#define LinkedListType int 
+
+using namespace std;
+
+
+class LinkedList {//链表定义
+
+    class LinkNode {
+    public:
+        LinkedListType date;
+        LinkNode* next;
+    };//节点定义
+
+public:
+
+    LinkNode* head = NULL;//头节点
+
+    bool IsEmpty() {
+        if (head == NULL)
+            return true;
+        return false;
+
+    }//判空函数   部分函数调用时需首先判定链表是否为空，否则会执行无效操作甚至出错
+
+    void CreatList() {//创建链表
+
+        head = new LinkNode;//创建节点空间
+        head->date = INT_MAX;
+        head->next = NULL;
+
+        int num;
+        cout << "请输入数据：";
+        while (cin >> num) {
+
+            LinkNode* tmp = head->next;
+            head->next = new LinkNode;
+            head->next->next = tmp;
+            head->next->date = num;
+            cout << "请继续输入数据：";
+            //头插法创建链表
+        }
+        
+        cout << "创建成功！" << endl;
+        cout << "创建后的结果的是：";
+        Display();
+    }
+
+    void Display() {//输出链表所用函数
+
+        if (IsEmpty())
+            return;
+
+        LinkNode* p = head->next;//遍历指针
+
+        while (NULL != p)//遍历
+        {
+            cout << p->date << " ";
+            p = p->next;
+        }
+        cout << endl;
+
+    }
+
+    void InsertSort() {//插入排序
+        if (IsEmpty())
+            return;
+
+        LinkNode* start = head;
+
+        while (NULL != start->next) {
+
+            LinkNode* minNode = head, * pre = start;//每次循环从start开始，找到start后节点的最小节点，并记录下最小节点的前一个节点
+            //以方便完成插入操作
+
+            for (LinkNode* p = start->next, *q = start; NULL != p; q = p, p = p->next) {//从start后的节点中寻找最小以及最小前的节点，p指向start下一个
+                //，而q指向start
+                if (p->date < minNode->date) {
+                    pre = q;
+                    minNode = p;
+                }
+            }
+            
+            pre->next = minNode->next;
+            LinkNode* tmp = start->next;
+            start->next = minNode;
+            minNode->next = tmp;
+            start = minNode;//将minNode插入start之后并将MINNODE作为新的开始节点
+
+        }
+
+        cout << "排序后的结果是：";
+        Display();
+    }
+
+    void DeleteNode(LinkedListType e) {
+        if (IsEmpty()) {
+            cout << "链表为空，无法删除！" << endl;
+            return;
+        }
+
+        LinkNode* p = head->next, * pre = head;
+        bool flag = true, isDelete = false;
+
+        while (NULL != p) {
+            
+            if (p->date == e) {
+                LinkNode* q = p->next;
+                pre->next = q;
+                delete p;
+                p = q;
+                isDelete = true;
+                if (flag) {
+                    cout << "元素" << e << "删除成功" << endl;
+                    flag = false;
+                }
+            }
+            else {
+                pre = p;
+                p = p->next;
+            }
+        }
+        if (!isDelete)
+            cout << "元素" << e << "删除成功" << endl;
+
+    }
+    ~LinkedList() {
+        LinkNode* p = head;
+        if (NULL == p)
+            return;
+
+        LinkNode* q = p->next;
+
+        while(NULL != q) {
+            delete p;
+            p = q;
+            q = q->next;
+        }
+        delete p;//从前到后依次删除
+    }
+
+};
